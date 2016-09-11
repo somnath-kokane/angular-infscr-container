@@ -16,9 +16,6 @@
       transclude: true,
       templateUrl: 'app/shared/infscr/infscr.tpl.html',
       scope: true,
-      bindToController: {
-        container: '='
-      },
       controller: ['$scope', InfScrCtrl],
       controllerAs: 'infscr',
       compile: function(element, attrs){
@@ -33,9 +30,9 @@
       init();
 
       function init(){
-        var pageChangeHandler = scope.$parent.$eval(attrs.pageChangeHandler);
+        var handler = scope.$parent.$eval(attrs.handler);
         element.on('scroll', _onScroll);
-        infscr.pageChangeHandler = pageChangeHandler;
+        infscr.handler = handler();
         infscr.scrollTo = scrollTo;
         infscr.activate();
       }
@@ -76,27 +73,39 @@
         nextPage();
       }
 
+      function getHandler(event, data){
+        return infscr.handler;
+      }
+
       function getData(page, next){
-        infscr.pageChangeHandler(page)
+
+        getHandler().onPage(page)
           .then(function(data){
-            addToContainer(data, next);
-            infscr.page = page;
+             addToContainer(data, next);
           })
       }
 
       function addToContainer(data, next){
-        if(infscr.container.length > 1){
+        var rData, obj = {};
+        var container = getHandler().container;
+        if(container.length > 1){
           if(next){
-            infscr.container.shift();
-            infscr.container.push(data);
+            obj.removed = true;
+            rData = container.shift();
+            container.push(data);
           } else {
-            infscr.container.pop();
-            infscr.container.unshift(data);
+            obj.removed = true;
+            rData = container.pop();
+            container.unshift(data);
           }
           infscr.scrollTo(next);
         } else {
-          infscr.container.push(data);
+          container.push(data);
         }
+        if(rData){
+          obj.data = angular.copy(rData);
+        }
+        getHandler().onData(data, obj);
       }
 
       function nextPage(){

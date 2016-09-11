@@ -16,10 +16,26 @@
 
     function activate(){
        vm.deviceContainer = [];
-       vm.getDevices = getDevices;
+       vm.infscrHander = infscrHander;
     }
 
-    function getDevices(page){
+    function infscrHander(){
+      return {
+        container: vm.deviceContainer,
+        onPage: getDataByPage,
+        onData: onData
+      }
+    }
+
+    function onData(data, obj){
+      if(obj.removed){
+        console.log('data removed from container', obj);
+      }
+
+      console.log('data added to container', data);
+    }
+
+    function getDataByPage(page){
       return DeviceService.getAll({page: page}).then(function(data){
         data.forEach(function(item){
           item.name += ' ( page '+page+')';

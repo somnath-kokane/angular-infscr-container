@@ -20,7 +20,7 @@
   <h2>Angular Cache and Infinite Scroll Demo</h2>
   <div ng-controller="DeviceCtrl as vm" class="container">
     <div class="col-offset-6 col-md-6">
-      <infscr container='vm.deviceContainer' page-change-handler='vm.getDevices'>
+      <infscr handler='vm.infscrHander'>
         <div ng-repeat="devices in vm.deviceContainer" class="devices">
           <div ng-repeat="device in devices track by device.id" class='col-md-12'>
             <p>{{device.name}}</p>
