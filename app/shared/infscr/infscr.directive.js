@@ -36,8 +36,8 @@
         var pageChangeHandler = scope.$parent.$eval(attrs.pageChangeHandler);
         element.on('scroll', _onScroll);
         infscr.pageChangeHandler = pageChangeHandler;
-        infscr.activate();
         infscr.scrollTo = scrollTo;
+        infscr.activate();
       }
 
       function onScroll(ev){
@@ -68,6 +68,7 @@
       var infscr = this;
       var page = 0;
       var max = 10;
+      var nextPrev;
       
       infscr.activate = function activate(){
         infscr.nextPage = nextPage;
@@ -99,15 +100,23 @@
       }
 
       function nextPage(){
+        if(nextPrev == 'prev'){
+          page += 1; 
+        }
         if(page < max){
           page += 1;
+          nextPrev = 'next';
           getData(page, true);
         }
       }
 
       function prevPage(){
+        if(nextPrev == 'next'){
+          page -= 1;
+        }
         if(page > 1){
-          page -= 1; 
+          page -= 1;
+          nextPrev = 'prev'; 
           getData(page, false);
         }
       }
